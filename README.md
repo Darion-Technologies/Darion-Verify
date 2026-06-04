@@ -33,6 +33,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_EMPLOYEE_PHOTOS_BUCKET=employee-photos
+ADMIN_ACCESS_KEY=change-this-long-random-admin-gate-key
 ```
 
 5. Start the app:
@@ -44,6 +45,18 @@ npm run dev
 Open `http://localhost:3000/admin/login`.
 
 `NEXT_PUBLIC_APP_URL` is only used as a fallback. ID card QR codes derive the deployed domain from the incoming request, so they should use your production host automatically after deployment.
+
+## Admin Gate
+
+Set `ADMIN_ACCESS_KEY` in production to hide every `/admin/*` route from public visitors. Without the key, admin routes return a 404 before the Supabase login page is shown.
+
+Admin access flow:
+
+```text
+https://your-domain.com/admin/login?access_key=YOUR_ADMIN_ACCESS_KEY
+```
+
+The app stores a secure HTTP-only gate cookie for 8 hours and redirects to the clean `/admin/login` URL. Supabase email/password login is still required after this gate.
 
 ## Main Routes
 
