@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { employeeSchema, generateEmployeeId, generateVerificationToken } from "@/lib/employee";
+import { getProductionApiError } from "@/lib/api-errors";
 import { requireApiUser } from "@/lib/api";
 import { createAdminClient } from "@/lib/supabase/server";
 import { generateTotpSecret } from "@/lib/totp";
@@ -17,7 +18,7 @@ export async function GET() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: getProductionApiError(error.message) }, { status: 500 });
   }
 
   return NextResponse.json({ employees: data });
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
     .select("id", { count: "exact", head: true });
 
   if (countError) {
-    return NextResponse.json({ error: countError.message }, { status: 500 });
+    return NextResponse.json({ error: getProductionApiError(countError.message) }, { status: 500 });
   }
 
   const employee = {
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
   const { data, error } = await supabase.from("employees").insert(employee).select("*").single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: getProductionApiError(error.message) }, { status: 500 });
   }
 
   await supabase.from("employee_activity_logs").insert({

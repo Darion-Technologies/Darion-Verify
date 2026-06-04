@@ -1,6 +1,6 @@
 # Darion Badge
 
-Darion Badge is a simple employee ID verification system for Darion Technologies. HR/Admin users can create employees, generate employee IDs and secure verification tokens, upload photos, preview ID cards with QR codes, and review verification scan logs. Public verification pages are token-based and do not require login.
+Darion Badge is a simple employee ID verification system for Darion Technologies. HR/Admin users can create employees, generate employee IDs and QR verification keys, upload photos, preview ID cards with QR codes, and review verification scan logs. Public verification pages use secure verification links and do not require login.
 
 ## Stack
 
@@ -58,6 +58,17 @@ https://your-domain.com/admin/login?access_key=YOUR_ADMIN_ACCESS_KEY
 
 The app stores a secure HTTP-only gate cookie for 8 hours and redirects to the clean `/admin/login` URL. Admin sign-in is still required after this gate.
 
+## Production Checklist
+
+- Configure all required environment variables from `.env.example`.
+- Run every SQL file in `supabase/migrations` that has not already been applied.
+- Confirm the `employee-photos` storage bucket exists and has the policies from `supabase/schema.sql`.
+- Set `ADMIN_ACCESS_KEY` before deploying so `/admin/*` is hidden from public visitors.
+- Create at least one admin account before sharing the admin URL.
+- Confirm `NEXT_PUBLIC_APP_URL` is set, even though QR links derive the deployed host from requests when available.
+- After schema changes, run `notify pgrst, 'reload schema';` or wait for the API schema cache to refresh.
+- Test one employee end to end: create, upload photo, preview card, share card, scan QR, and authorized verification.
+
 ## Main Routes
 
 - `/admin/login`
@@ -91,7 +102,7 @@ The app stores a secure HTTP-only gate cookie for 8 hours and redirects to the c
 
 The public verification response intentionally includes only safe employee fields: company name in UI, verification title, employee photo, full name, employee ID, role, department, employment type, joining date, status, and result.
 
-Authorized Verification on the public verification page requires the employee-specific 6-digit code from an authenticator app. Admins can scan or reset the authenticator setup from the employee profile page. A valid code reveals only non-sensitive employee details and recent admin employee update history on the same page. It does not return verification tokens, photo URLs, authenticator secrets, or sensitive personal, identity, bank, contact, salary, address, emergency contact, or document data.
+Authorized Verification on the public verification page requires the employee-specific 6-digit code from an authenticator app. Admins can scan or reset the authenticator setup from the employee profile page. A valid code reveals only non-sensitive employee details and recent admin employee update history on the same page. It does not return QR verification keys, photo URLs, authenticator secrets, or sensitive personal, identity, bank, contact, salary, address, emergency contact, or document data.
 
 ## ID Cards
 
@@ -102,6 +113,7 @@ The card page supports PNG download and browser print/save-as-PDF.
 ## Checks
 
 ```bash
+npm run lint
 npm run typecheck
 npm run build
 ```

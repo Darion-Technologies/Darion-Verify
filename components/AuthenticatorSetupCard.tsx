@@ -6,22 +6,33 @@ import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QRCodeBox } from "@/components/QRCodeBox";
+import { Textarea } from "@/components/ui/textarea";
 import type { Employee } from "@/lib/types";
 
 export function AuthenticatorSetupCard({ employee }: { employee: Employee }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [note, setNote] = useState("");
 
   const setupUri = employee.complete_verification_secret
     ? getAuthenticatorUri(employee.complete_verification_secret, employee.employee_id, employee.full_name)
     : "";
 
   async function resetSecret() {
+    if (!note.trim()) {
+      setError("Add an admin note before resetting authenticator setup.");
+      return;
+    }
+
     setLoading(true);
     setError("");
+    setMessage("");
     const response = await fetch(`/api/employees/${employee.id}/authenticator-secret`, {
-      method: "POST"
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ admin_note: note })
     });
 
     if (!response.ok) {
@@ -31,6 +42,8 @@ export function AuthenticatorSetupCard({ employee }: { employee: Employee }) {
       return;
     }
 
+    setNote("");
+    setMessage("Authenticator setup reset.");
     setLoading(false);
     router.refresh();
   }
@@ -60,6 +73,12 @@ export function AuthenticatorSetupCard({ employee }: { employee: Employee }) {
           </div>
         )}
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
+        {message ? <p className="text-sm text-emerald-700">{message}</p> : null}
+        <Textarea
+          value={note}
+          onChange={(event) => setNote(event.target.value)}
+          placeholder="Required note for authenticator reset"
+        />
         <Button variant="outline" onClick={resetSecret} disabled={loading}>
           <RotateCcw className="h-4 w-4" />
           {loading ? "Resetting..." : "Reset authenticator setup"}

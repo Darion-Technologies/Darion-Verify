@@ -17,6 +17,7 @@ import { uploadEmployeePhoto } from "@/lib/storage";
 export function EmployeeForm({ employee }: { employee?: Employee }) {
   const router = useRouter();
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const {
@@ -41,6 +42,13 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
 
   async function onSubmit(values: EmployeeFormValues) {
     setError("");
+    setMessage("");
+
+    if (employee && values.status !== employee.status && !values.admin_note?.trim()) {
+      setError("Add an admin update note before changing employee status.");
+      return;
+    }
+
     const response = await fetch(employee ? `/api/employees/${employee.id}` : "/api/employees", {
       method: employee ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
@@ -53,7 +61,12 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
       return;
     }
 
-    router.push(`/admin/employees/${payload.employee.id}`);
+    if (!employee) {
+      router.push(`/admin/employees/${payload.employee.id}`);
+      return;
+    }
+
+    setMessage("Employee changes saved.");
     router.refresh();
   }
 
@@ -78,6 +91,7 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {error ? <div className="border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div> : null}
+      {message ? <div className="border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">{message}</div> : null}
       <input type="hidden" {...register("photo_url")} />
       <div className="grid gap-5 md:grid-cols-2">
         <Field label="Full name" error={errors.full_name?.message}>

@@ -34,7 +34,7 @@ export function VerificationResultCard({
             <ShieldX className="h-12 w-12 text-red-600" />
             <h1 className="mt-4 text-2xl font-semibold">{result}</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              This verification token does not match an employee record.
+              This verification link does not match an employee record.
             </p>
           </div>
         ) : (

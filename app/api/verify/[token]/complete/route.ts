@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/server";
+import { getProductionApiError } from "@/lib/api-errors";
 import { verifyTotpCode } from "@/lib/totp";
 import type { CompleteVerificationEmployee, EmployeeActivityLog } from "@/lib/types";
 
@@ -40,12 +41,15 @@ export async function POST(request: Request, context: RouteContext) {
     !data.complete_verification_secret ||
     !verifyTotpCode(data.complete_verification_secret, parsed.data.code)
   ) {
-    return NextResponse.json({ error: "Invalid authenticator code." }, { status: 401 });
+    return NextResponse.json(
+      { error: error ? getProductionApiError(error.message) : "Invalid authenticator code." },
+      { status: error ? 500 : 401 }
+    );
   }
 
   await supabase.from("verification_logs").insert({
     employee_id: data.id,
-    result: "Complete verification accessed",
+    result: "Authorized Verification accessed",
     ip_address: ip,
     device_info: deviceInfo
   });

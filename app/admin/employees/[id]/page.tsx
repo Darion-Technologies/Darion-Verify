@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { AuthenticatorSetupCard } from "@/components/AuthenticatorSetupCard";
 import { EmployeeForm } from "@/components/EmployeeForm";
@@ -7,7 +9,7 @@ import { TokenActions } from "@/components/TokenActions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/server";
-import type { Employee, VerificationLog } from "@/lib/types";
+import type { Employee, EmployeeActivityLog, VerificationLog } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -32,15 +34,39 @@ export default async function EmployeeDetailPage({ params }: PageProps) {
     .order("scanned_at", { ascending: false })
     .limit(25);
 
+  const { data: activityLogs } = await supabase
+    .from("employee_activity_logs")
+    .select("*")
+    .eq("employee_id", id)
+    .order("created_at", { ascending: false })
+    .limit(25);
+
   return (
     <AdminLayout>
       <div className="mb-6">
+        <Link
+          href="/admin/employees"
+          className="mb-2 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to employees
+        </Link>
         <h1 className="text-2xl font-semibold">Employee profile</h1>
-        <p className="text-sm text-muted-foreground">Review, update, regenerate token, and inspect verification scans.</p>
+        <p className="text-sm text-muted-foreground">
+          Review, update, manage QR access, and inspect employee verification records.
+        </p>
       </div>
       <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
         <div className="space-y-6">
           <EmployeeProfileCard employee={employee as Employee} />
+          <Card className="bg-white">
+            <CardHeader className="border-b">
+              <CardTitle>Employee Activity</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <ActivityLogs logs={(activityLogs || []) as EmployeeActivityLog[]} />
+            </CardContent>
+          </Card>
           <Card className="bg-white">
             <CardHeader className="border-b">
               <CardTitle>Edit employee</CardTitle>
@@ -53,7 +79,7 @@ export default async function EmployeeDetailPage({ params }: PageProps) {
         <div className="space-y-6">
           <Card className="bg-white">
             <CardHeader className="border-b">
-              <CardTitle>Verification token</CardTitle>
+              <CardTitle>QR verification key</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 pt-6">
               <p className="break-all border bg-muted p-3 text-xs text-muted-foreground">
@@ -94,6 +120,28 @@ function ScanLogs({ logs }: { logs: VerificationLog[] }) {
           </div>
           <p className="mt-1 break-all text-xs text-muted-foreground">{log.device_info || "Unknown device"}</p>
           <p className="mt-1 text-xs text-muted-foreground">IP: {log.ip_address || "Not available"}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ActivityLogs({ logs }: { logs: EmployeeActivityLog[] }) {
+  if (!logs.length) {
+    return <p className="text-sm text-muted-foreground">No employee activity recorded yet.</p>;
+  }
+
+  return (
+    <div className="space-y-3">
+      {logs.map((log) => (
+        <div key={log.id} className="border p-3 text-sm">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+            <p className="font-medium">{log.action}</p>
+            <p className="whitespace-nowrap text-xs text-muted-foreground">
+              {new Date(log.created_at).toLocaleString()}
+            </p>
+          </div>
+          {log.details ? <p className="mt-2 whitespace-pre-wrap text-xs text-muted-foreground">{log.details}</p> : null}
         </div>
       ))}
     </div>

@@ -9,7 +9,7 @@ export default function NewEmployeePage() {
     <AdminLayout>
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">Add employee</h1>
-        <p className="text-sm text-muted-foreground">Employee ID and verification token are generated automatically.</p>
+        <p className="text-sm text-muted-foreground">Employee ID and QR verification key are generated automatically.</p>
       </div>
       <Card className="bg-white">
         <CardHeader className="border-b">

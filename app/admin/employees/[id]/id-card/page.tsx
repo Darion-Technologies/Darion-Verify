@@ -41,7 +41,9 @@ export default async function IDCardPage({ params }: PageProps) {
             </Link>
           </Button>
           <h1 className="text-2xl font-semibold">ID card preview</h1>
-          <p className="text-sm text-muted-foreground">Download a PNG or use print to save as PDF.</p>
+          <p className="text-sm text-muted-foreground">
+            Share sends the card image and verification link when supported. You can also download PNG or save as PDF.
+          </p>
         </div>
         <IDCardActions
           fileName={typedEmployee.employee_id}
