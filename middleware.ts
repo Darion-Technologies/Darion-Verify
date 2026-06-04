@@ -3,16 +3,16 @@ import { NextResponse, type NextRequest } from "next/server";
 const ADMIN_GATE_COOKIE = "darion_admin_gate";
 const DENIED_REDIRECT_URL = "https://tech.darion.in";
 const DENIED_ROASTS = [
-  "Nice try hacker. Your keyboard just filed a complaint.",
-  "Nice try hacker. Even the firewall yawned.",
-  "Nice try hacker. This door requires more than vibes.",
-  "Nice try hacker. Your access level is currently potato.",
-  "Nice try hacker. The admin panel saw you coming and hid behind the couch.",
+  "Nice try hacker. This door requires credentials, not confidence.",
+  "Nice try hacker. The admin panel politely declined your enthusiasm.",
+  "Nice try hacker. Access denied with corporate professionalism.",
   "Nice try hacker. Unauthorized confidence is still unauthorized.",
-  "Nice try hacker. The login page said: new phone, who dis?",
-  "Nice try hacker. You brought a spoon to a server room.",
-  "Nice try hacker. This is not the admin panel you are looking for.",
-  "Nice try hacker. Redirecting you to somewhere less spicy."
+  "Nice try hacker. The login page has boundaries.",
+  "Nice try hacker. That was brave. Incorrect, but brave.",
+  "Nice try hacker. Please bring an access key next time.",
+  "Nice try hacker. This shortcut has been sent to compliance.",
+  "Nice try hacker. The admin gate is doing its job beautifully.",
+  "Nice try hacker. Redirecting you somewhere more appropriate."
 ];
 
 export function middleware(request: NextRequest) {
@@ -69,10 +69,12 @@ function createDeniedHtml() {
     <title>Nice Try</title>
     <style>
       :root {
-        color-scheme: dark;
         --cyan: #078daf;
-        --ink: #08111a;
-        --paper: #f8fafc;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --line: #e2e8f0;
+        --paper: #ffffff;
+        --soft: #f8fafc;
       }
 
       * {
@@ -84,206 +86,167 @@ function createDeniedHtml() {
         margin: 0;
         display: grid;
         place-items: center;
-        overflow: hidden;
-        background:
-          radial-gradient(circle at 20% 20%, rgba(7, 141, 175, 0.35), transparent 28rem),
-          radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.11), transparent 22rem),
-          #05070a;
-        color: var(--paper);
+        background: var(--soft);
+        color: var(--ink);
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      }
-
-      .scanline {
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        background: repeating-linear-gradient(
-          to bottom,
-          rgba(255, 255, 255, 0.05) 0,
-          rgba(255, 255, 255, 0.05) 1px,
-          transparent 1px,
-          transparent 7px
-        );
-        animation: drift 8s linear infinite;
-        opacity: 0.35;
+        padding: 24px;
       }
 
       .card {
         position: relative;
-        width: min(92vw, 560px);
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        background: rgba(8, 17, 26, 0.82);
-        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
-        padding: 32px;
-        text-align: center;
-        animation: pop 600ms cubic-bezier(.2,.8,.2,1), floaty 4s ease-in-out infinite;
+        width: min(100%, 520px);
+        border: 1px solid var(--line);
+        background: var(--paper);
+        box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
       }
 
-      .badge {
-        display: inline-flex;
+      .header {
+        display: flex;
         align-items: center;
-        gap: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        padding: 8px 12px;
-        color: #b8efff;
-        font-size: 12px;
-        font-weight: 800;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
+        gap: 14px;
+        border-bottom: 1px solid var(--line);
+        padding: 22px 24px;
       }
 
       .logo {
-        width: 72px;
-        height: 72px;
-        margin: 24px auto 14px;
+        width: 46px;
+        height: 46px;
         display: grid;
         place-items: center;
-        border: 2px solid rgba(255, 255, 255, 0.9);
+        border: 1px solid var(--ink);
         background: var(--cyan);
         color: white;
-        font-size: 34px;
+        font-size: 22px;
         font-weight: 950;
         letter-spacing: -0.08em;
-        animation: wobble 1.6s ease-in-out infinite;
+      }
+
+      .eyebrow {
+        margin: 0;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .brand {
+        margin: 3px 0 0;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .content {
+        padding: 26px 24px 24px;
       }
 
       h1 {
         margin: 0;
-        font-size: clamp(38px, 9vw, 76px);
-        line-height: 0.9;
-        text-transform: uppercase;
-        letter-spacing: -0.05em;
-        text-shadow: 4px 4px 0 rgba(7, 141, 175, 0.75);
+        font-size: clamp(28px, 6vw, 40px);
+        line-height: 1.05;
+        letter-spacing: -0.03em;
       }
 
       .roast {
-        min-height: 56px;
-        margin: 22px auto 0;
-        max-width: 440px;
-        color: #dbeafe;
-        font-size: 18px;
+        min-height: 48px;
+        margin: 14px 0 0;
+        color: #334155;
+        font-size: 16px;
         line-height: 1.45;
       }
 
-      .timer {
-        margin: 26px auto 0;
-        width: 150px;
-        height: 150px;
-        display: grid;
-        place-items: center;
-        border: 3px solid rgba(255, 255, 255, 0.24);
-        border-radius: 999px;
-        background: conic-gradient(var(--cyan) calc(var(--progress, 100) * 1%), rgba(255, 255, 255, 0.1) 0);
-        animation: pulse 1s ease-in-out infinite;
+      .countdown {
+        margin-top: 24px;
+        border: 1px solid var(--line);
+        background: #f8fafc;
       }
 
-      .timer-inner {
-        width: 118px;
-        height: 118px;
-        display: grid;
-        place-items: center;
-        border-radius: 999px;
-        background: #05070a;
+      .countdown-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 14px 16px;
+      }
+
+      .countdown-label {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
       }
 
       #count {
-        font-size: 48px;
-        font-weight: 900;
+        min-width: 40px;
+        text-align: right;
+        color: var(--ink);
+        font-size: 30px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .progress {
+        height: 3px;
+        background: #e2e8f0;
+      }
+
+      .bar {
+        width: calc(var(--progress, 100) * 1%);
+        height: 100%;
+        background: var(--cyan);
       }
 
       .redirect {
-        margin-top: 18px;
-        color: #a8b3c7;
-        font-size: 14px;
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 13px;
       }
 
       .redirect strong {
-        color: white;
+        color: var(--ink);
       }
 
-      .spark {
-        position: fixed;
-        width: 10px;
-        height: 10px;
-        background: var(--cyan);
-        opacity: 0.55;
-        animation: sparkle 5s linear infinite;
-      }
-
-      .spark:nth-child(1) { left: 10%; top: 22%; animation-delay: 0s; }
-      .spark:nth-child(2) { left: 78%; top: 18%; animation-delay: 800ms; }
-      .spark:nth-child(3) { left: 18%; top: 78%; animation-delay: 1300ms; }
-      .spark:nth-child(4) { left: 88%; top: 72%; animation-delay: 2100ms; }
-
-      @keyframes pop {
-        from { opacity: 0; transform: translateY(20px) scale(0.96); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
-      }
-
-      @keyframes floaty {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-8px); }
-      }
-
-      @keyframes wobble {
-        0%, 100% { transform: rotate(-2deg) scale(1); }
-        50% { transform: rotate(2deg) scale(1.06); }
-      }
-
-      @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.035); }
-      }
-
-      @keyframes drift {
-        from { transform: translateY(0); }
-        to { transform: translateY(56px); }
-      }
-
-      @keyframes sparkle {
-        0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-        20% { opacity: 0.7; }
-        100% { transform: translateY(-120px) rotate(180deg); opacity: 0; }
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        *, *::before, *::after {
-          animation-duration: 1ms !important;
-          animation-iteration-count: 1 !important;
-          scroll-behavior: auto !important;
+      @media (max-width: 520px) {
+        .header,
+        .content {
+          padding-left: 18px;
+          padding-right: 18px;
         }
       }
     </style>
   </head>
   <body>
-    <div class="scanline"></div>
-    <span class="spark"></span>
-    <span class="spark"></span>
-    <span class="spark"></span>
-    <span class="spark"></span>
     <main class="card" role="main" aria-live="polite">
-      <div class="badge">Admin gate locked</div>
-      <div class="logo">dt.</div>
-      <h1>Nice try hacker</h1>
-      <p class="roast">${escapeHtml(roast)}</p>
-      <div class="timer" id="timer">
-        <div class="timer-inner">
-          <span id="count">10</span>
+      <header class="header">
+        <div class="logo">dt.</div>
+        <div>
+          <p class="eyebrow">Admin gate locked</p>
+          <p class="brand">Darion Verify</p>
         </div>
-      </div>
-      <p class="redirect">Redirecting to <strong>tech.darion.in</strong> in <span id="countText">10</span> seconds.</p>
+      </header>
+      <section class="content">
+        <h1>Nice try hacker.</h1>
+        <p class="roast">${escapeHtml(roast)}</p>
+        <div class="countdown">
+          <div class="countdown-row">
+            <p class="countdown-label">Redirecting to tech.darion.in</p>
+          <span id="count">10</span>
+          </div>
+          <div class="progress">
+            <div class="bar" id="bar"></div>
+          </div>
+        </div>
+        <p class="redirect">Admins need the private access key before Supabase login is shown.</p>
+      </section>
     </main>
     <script>
       var seconds = 10;
       var count = document.getElementById("count");
-      var countText = document.getElementById("countText");
-      var timer = document.getElementById("timer");
+      var bar = document.getElementById("bar");
 
       function tick() {
         seconds -= 1;
         count.textContent = String(seconds);
-        countText.textContent = String(seconds);
-        timer.style.setProperty("--progress", String(seconds * 10));
+        bar.style.setProperty("--progress", String(seconds * 10));
 
         if (seconds <= 0) {
           window.location.replace("${DENIED_REDIRECT_URL}");
