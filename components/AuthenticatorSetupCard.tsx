@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QRCodeBox } from "@/components/QRCodeBox";
@@ -19,6 +19,43 @@ export function AuthenticatorSetupCard({ employee }: { employee: Employee }) {
   const setupUri = employee.complete_verification_secret
     ? getAuthenticatorUri(employee.complete_verification_secret, employee.employee_id, employee.full_name)
     : "";
+
+  async function shareSetupDetails() {
+    if (!employee.complete_verification_secret) {
+      setError("No authenticator setup exists for this employee.");
+      return;
+    }
+
+    setError("");
+    setMessage("");
+
+    const shareText = [
+      `Darion Badge authenticator setup for ${employee.full_name}`,
+      `Employee ID: ${employee.employee_id}`,
+      `Manual setup key: ${employee.complete_verification_secret}`,
+      `Setup URI: ${setupUri}`,
+      "Share only with authorized people."
+    ].join("\n");
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `${employee.full_name} authenticator setup`,
+          text: shareText
+        });
+        setMessage("Authenticator setup details shared.");
+        return;
+      }
+
+      await copyText(shareText);
+      setMessage("Authenticator setup details copied.");
+    } catch (shareError) {
+      if (shareError instanceof DOMException && shareError.name === "AbortError") {
+        return;
+      }
+      setError("Unable to share authenticator setup details.");
+    }
+  }
 
   async function resetSecret() {
     if (!note.trim()) {
@@ -66,6 +103,9 @@ export function AuthenticatorSetupCard({ employee }: { employee: Employee }) {
                 {employee.complete_verification_secret}
               </p>
             </div>
+            <div className="border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
+              Authenticator setup details are sensitive. Share them only with the employee or an authorized admin.
+            </div>
           </div>
         ) : (
           <div className="border bg-neutral-50 p-4 text-sm text-muted-foreground">
@@ -79,13 +119,41 @@ export function AuthenticatorSetupCard({ employee }: { employee: Employee }) {
           onChange={(event) => setNote(event.target.value)}
           placeholder="Required note for authenticator reset"
         />
-        <Button variant="outline" onClick={resetSecret} disabled={loading}>
-          <RotateCcw className="h-4 w-4" />
-          {loading ? "Resetting..." : "Reset authenticator setup"}
-        </Button>
+        <div className="grid gap-3">
+          <Button
+            className="w-full justify-start"
+            variant="outline"
+            onClick={shareSetupDetails}
+            disabled={!employee.complete_verification_secret}
+          >
+            <Share2 className="h-4 w-4" />
+            Share setup details
+          </Button>
+          <Button className="w-full justify-start" variant="outline" onClick={resetSecret} disabled={loading}>
+            <RotateCcw className="h-4 w-4" />
+            {loading ? "Resetting..." : "Reset authenticator setup"}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
+}
+
+async function copyText(value: string) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = value;
+  textarea.setAttribute("readonly", "true");
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
 }
 
 function getAuthenticatorUri(secret: string, employeeId: string, employeeName: string) {
