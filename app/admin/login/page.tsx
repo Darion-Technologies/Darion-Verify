@@ -44,7 +44,7 @@ export default function LoginPage() {
         <CardHeader className="border-b">
           <DarionLogo className="mb-4 h-14 w-14" />
           <CardTitle>Darion Verify Admin</CardTitle>
-          <p className="text-sm text-muted-foreground">Sign in with your Supabase admin account.</p>
+          <p className="text-sm text-muted-foreground">Sign in to manage QR verification records.</p>
         </CardHeader>
         <CardContent className="pt-6">
           <form onSubmit={login} className="space-y-4">

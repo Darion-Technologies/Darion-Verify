@@ -48,7 +48,7 @@ Open `http://localhost:3000/admin/login`.
 
 ## Admin Gate
 
-Set `ADMIN_ACCESS_KEY` in production to hide every `/admin/*` route from public visitors. Without the key, admin routes return a 404 before the Supabase login page is shown.
+Set `ADMIN_ACCESS_KEY` in production to hide every `/admin/*` route from public visitors. Without the key, admin routes show the locked access page before any login form is shown.
 
 Admin access flow:
 
@@ -56,7 +56,7 @@ Admin access flow:
 https://your-domain.com/admin/login?access_key=YOUR_ADMIN_ACCESS_KEY
 ```
 
-The app stores a secure HTTP-only gate cookie for 8 hours and redirects to the clean `/admin/login` URL. Supabase email/password login is still required after this gate.
+The app stores a secure HTTP-only gate cookie for 8 hours and redirects to the clean `/admin/login` URL. Admin sign-in is still required after this gate.
 
 ## Main Routes
 

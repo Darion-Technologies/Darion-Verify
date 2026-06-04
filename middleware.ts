@@ -235,7 +235,7 @@ function createDeniedHtml() {
             <div class="bar" id="bar"></div>
           </div>
         </div>
-        <p class="redirect">Admins need the private access key before Supabase login is shown.</p>
+        <p class="redirect">QR verification access requires an authorized admin link.</p>
       </section>
     </main>
     <script>
