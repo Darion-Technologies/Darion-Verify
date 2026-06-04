@@ -37,6 +37,9 @@ export type PublicEmployee = Pick<
   | "photo_url"
 >;
 
+export type CompleteVerificationEmployee = PublicEmployee &
+  Pick<Employee, "created_at" | "updated_at">;
+
 export type VerificationLog = {
   id: string;
   employee_id: string | null;

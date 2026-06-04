@@ -49,7 +49,7 @@ export default async function VerifyPage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-neutral-50 px-4 py-10">
-      <VerificationResultCard employee={employee} result={result} />
+      <VerificationResultCard employee={employee} result={result} token={token} />
     </main>
   );
 }

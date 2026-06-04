@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ShieldCheck, ShieldX } from "lucide-react";
+import { CompleteVerificationPanel } from "@/components/CompleteVerificationPanel";
 import { DarionLogo } from "@/components/DarionLogo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmployeeStatusBadge } from "@/components/EmployeeStatusBadge";
@@ -7,10 +8,12 @@ import type { PublicEmployee } from "@/lib/types";
 
 export function VerificationResultCard({
   employee,
-  result
+  result,
+  token
 }: {
   employee: PublicEmployee | null;
   result: string;
+  token: string;
 }) {
   const verified = result === "Verified Employee";
 
@@ -73,6 +76,7 @@ export function VerificationResultCard({
                 <p className="text-lg font-semibold">{result}</p>
               </div>
             </div>
+            <CompleteVerificationPanel token={token} />
           </div>
         )}
       </CardContent>

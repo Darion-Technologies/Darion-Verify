@@ -34,6 +34,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_EMPLOYEE_PHOTOS_BUCKET=employee-photos
 ADMIN_ACCESS_KEY=change-this-long-random-admin-gate-key
+COMPLETE_VERIFICATION_CODE=change-this-internal-complete-verification-code
 ```
 
 5. Start the app:
@@ -88,6 +89,8 @@ The app stores a secure HTTP-only gate cookie for 8 hours and redirects to the c
 - Invalid token: Invalid verification link
 
 The public verification response intentionally includes only safe employee fields: company name in UI, verification title, employee photo, full name, employee ID, role, department, employment type, joining date, status, and result.
+
+Complete Verification on the public verification page requires `COMPLETE_VERIFICATION_CODE`. A valid code reveals only non-sensitive employee details and recent QR verification scan history on the same page. It does not return verification tokens or sensitive personal, identity, bank, contact, salary, address, emergency contact, or document data.
 
 ## ID Cards
 
