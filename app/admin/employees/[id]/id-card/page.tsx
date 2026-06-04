@@ -7,6 +7,7 @@ import { IDCardPreview } from "@/components/IDCardPreview";
 import { Button } from "@/components/ui/button";
 import { requireAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/server";
+import { getRequestOrigin } from "@/lib/url";
 import type { Employee } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +27,8 @@ export default async function IDCardPage({ params }: PageProps) {
   }
 
   const typedEmployee = employee as Employee;
+  const origin = await getRequestOrigin();
+  const verificationUrl = `${origin}/verify/${typedEmployee.verification_token}`;
 
   return (
     <AdminLayout>
@@ -43,7 +46,7 @@ export default async function IDCardPage({ params }: PageProps) {
         <IDCardActions fileName={typedEmployee.employee_id} />
       </div>
       <div className="flex justify-center">
-        <IDCardPreview employee={typedEmployee} />
+        <IDCardPreview employee={typedEmployee} verificationUrl={verificationUrl} />
       </div>
     </AdminLayout>
   );

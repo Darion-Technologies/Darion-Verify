@@ -4,11 +4,14 @@ import Image from "next/image";
 import { DarionLogo } from "@/components/DarionLogo";
 import { QRCodeBox } from "@/components/QRCodeBox";
 import type { Employee } from "@/lib/types";
-import { publicVerificationUrl } from "@/lib/employee";
 
-export function IDCardPreview({ employee }: { employee: Employee }) {
-  const verificationUrl = publicVerificationUrl(employee.verification_token);
-
+export function IDCardPreview({
+  employee,
+  verificationUrl
+}: {
+  employee: Employee;
+  verificationUrl: string;
+}) {
   return (
     <div
       id="id-card-print-area"

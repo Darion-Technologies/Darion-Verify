@@ -43,6 +43,8 @@ npm run dev
 
 Open `http://localhost:3000/admin/login`.
 
+`NEXT_PUBLIC_APP_URL` is only used as a fallback. ID card QR codes derive the deployed domain from the incoming request, so they should use your production host automatically after deployment.
+
 ## Main Routes
 
 - `/admin/login`
