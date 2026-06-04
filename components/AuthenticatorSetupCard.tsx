@@ -70,7 +70,7 @@ export function AuthenticatorSetupCard({ employee }: { employee: Employee }) {
 }
 
 function getAuthenticatorUri(secret: string, employeeId: string, employeeName: string) {
-  const issuer = "Darion Verify";
+  const issuer = "Darion Badge";
   const label = `${issuer}:${employeeId} ${employeeName}`;
   const params = new URLSearchParams({
     secret,

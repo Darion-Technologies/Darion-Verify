@@ -43,7 +43,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md bg-white">
         <CardHeader className="border-b">
           <DarionLogo className="mb-4 h-14 w-14" />
-          <CardTitle>Darion Verify Admin</CardTitle>
+          <CardTitle>Darion Badge Admin</CardTitle>
           <p className="text-sm text-muted-foreground">Sign in to manage QR verification records.</p>
         </CardHeader>
         <CardContent className="pt-6">

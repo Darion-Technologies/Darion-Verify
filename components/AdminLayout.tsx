@@ -15,7 +15,7 @@ export async function AdminLayout({ children }: { children: React.ReactNode }) {
           <Link href="/admin/employees" className="flex items-center gap-3">
             <DarionLogo className="h-10 w-10" />
             <div>
-              <p className="text-base font-semibold">Darion Verify</p>
+              <p className="text-base font-semibold">Darion Badge</p>
               <p className="text-xs text-muted-foreground">Darion Technologies</p>
             </div>
           </Link>

@@ -220,7 +220,7 @@ function createDeniedHtml() {
         <div class="logo">dt.</div>
         <div>
           <p class="eyebrow">Admin gate locked</p>
-          <p class="brand">Darion Verify</p>
+          <p class="brand">Darion Badge</p>
         </div>
       </header>
       <section class="content">

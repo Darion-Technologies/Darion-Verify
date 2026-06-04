@@ -1,6 +1,6 @@
-# Darion Verify
+# Darion Badge
 
-Darion Verify is a simple employee ID verification system for Darion Technologies. HR/Admin users can create employees, generate employee IDs and secure verification tokens, upload photos, preview ID cards with QR codes, and review verification scan logs. Public verification pages are token-based and do not require login.
+Darion Badge is a simple employee ID verification system for Darion Technologies. HR/Admin users can create employees, generate employee IDs and secure verification tokens, upload photos, preview ID cards with QR codes, and review verification scan logs. Public verification pages are token-based and do not require login.
 
 ## Stack
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Darion Verify",
+  title: "Darion Badge",
   description: "Employee ID verification system for Darion Technologies"
 };
 
