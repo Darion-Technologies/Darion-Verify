@@ -43,12 +43,12 @@ export function TokenActions({ employeeId }: { employeeId: string }) {
   return (
     <div className="space-y-3">
       {error ? <div className="border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div> : null}
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Button variant="outline" onClick={regenerateToken} disabled={!!loading}>
+      <div className="grid gap-3">
+        <Button className="w-full justify-start" variant="outline" onClick={regenerateToken} disabled={!!loading}>
           <RotateCcw className="h-4 w-4" />
           {loading === "token" ? "Regenerating..." : "Regenerate verification token"}
         </Button>
-        <Button variant="destructive" onClick={deleteEmployee} disabled={!!loading}>
+        <Button className="w-full justify-start" variant="destructive" onClick={deleteEmployee} disabled={!!loading}>
           <Trash2 className="h-4 w-4" />
           {loading === "delete" ? "Deleting..." : "Delete employee"}
         </Button>
