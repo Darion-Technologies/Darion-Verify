@@ -29,6 +29,7 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
     resolver: zodResolver(employeeSchema),
     defaultValues: {
       full_name: employee?.full_name || "",
+      work_email: employee?.work_email || "",
       role: employee?.role || "",
       department: employee?.department || "",
       employment_type: employee?.employment_type || "",
@@ -82,6 +83,9 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
       <div className="grid gap-5 md:grid-cols-2">
         <Field label="Full name" error={errors.full_name?.message}>
           <Input {...register("full_name")} placeholder="Aarav Sharma" />
+        </Field>
+        <Field label="Work email" error={errors.work_email?.message}>
+          <Input type="email" {...register("work_email")} placeholder="pavan@darion.in" />
         </Field>
         <Field label="Role" error={errors.role?.message}>
           <Input {...register("role")} placeholder="Full Stack Developer" />

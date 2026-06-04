@@ -28,6 +28,7 @@ export function EmployeeTable({ employees }: { employees: Employee[] }) {
     return employees.filter((employee) =>
       [
         employee.full_name,
+        employee.work_email,
         employee.employee_id,
         employee.department,
         employee.role,
@@ -57,7 +58,7 @@ export function EmployeeTable({ employees }: { employees: Employee[] }) {
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
         <Input
           className="pl-9"
-          placeholder="Search name, ID, department, status"
+          placeholder="Search name, email, ID, department, status"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
@@ -68,6 +69,7 @@ export function EmployeeTable({ employees }: { employees: Employee[] }) {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
+                <TableHead>Work Email</TableHead>
                 <TableHead>Employee ID</TableHead>
                 <TableHead>Department</TableHead>
                 <TableHead>Status</TableHead>
@@ -83,6 +85,7 @@ export function EmployeeTable({ employees }: { employees: Employee[] }) {
                       <p className="text-xs text-muted-foreground">{employee.role}</p>
                     </div>
                   </TableCell>
+                  <TableCell className="text-xs">{employee.work_email || "Not assigned"}</TableCell>
                   <TableCell className="font-mono text-xs">{employee.employee_id}</TableCell>
                   <TableCell>{employee.department}</TableCell>
                   <TableCell>

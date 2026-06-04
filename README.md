@@ -1,6 +1,6 @@
 # Darion Verify
 
-Darion Verify is a simple employee ID verification system for Darion Technologies. HR/Admin users can create employees, generate employee IDs and secure verification tokens, upload photos, preview ID cards with QR codes, and review verification scan logs. Public verification pages are token-based and do not require login.
+Darion Verify is a simple employee ID verification system for Darion Technologies. HR/Admin users can create employees, assign admin-only work emails, generate employee IDs and secure verification tokens, upload photos, preview ID cards with QR codes, and review verification scan logs. Public verification pages are token-based and do not require login.
 
 ## Stack
 
@@ -92,6 +92,8 @@ The app stores a secure HTTP-only gate cookie for 8 hours and redirects to the c
 The public verification response intentionally includes only safe employee fields: company name in UI, verification title, employee photo, full name, employee ID, role, department, employment type, joining date, status, and result.
 
 Complete Verification on the public verification page requires the employee-specific 6-digit code from an authenticator app. Admins can scan or reset the authenticator setup from the employee profile page. A valid code reveals only non-sensitive employee details and recent admin employee update history on the same page. It does not return verification tokens, photo URLs, authenticator secrets, or sensitive personal, identity, bank, contact, salary, address, emergency contact, or document data.
+
+Work emails use the manual `first@darion.in` format and are visible only inside admin pages. They are not returned by public verification or Complete Verification APIs.
 
 ## ID Cards
 
