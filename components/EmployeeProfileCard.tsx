@@ -31,7 +31,6 @@ export function EmployeeProfileCard({ employee }: { employee: Employee }) {
           </div>
           <div className="grid flex-1 gap-4 sm:grid-cols-2">
             <Info label="Employee ID" value={employee.employee_id} />
-            <Info label="Work Email" value={employee.work_email || "Not assigned"} />
             <Info label="Department" value={employee.department} />
             <Info label="Employment Type" value={employee.employment_type || "Not specified"} />
             <Info label="Joining Date" value={employee.joining_date || "Not specified"} />

@@ -14,7 +14,6 @@ export type Employee = {
   id: string;
   employee_id: string;
   full_name: string;
-  work_email: string | null;
   role: string;
   department: string;
   employment_type: string | null;

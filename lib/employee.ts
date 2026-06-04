@@ -4,14 +4,6 @@ import { EMPLOYEE_STATUSES, type EmployeeStatus } from "@/lib/types";
 
 export const employeeSchema = z.object({
   full_name: z.string().trim().min(2, "Full name is required"),
-  work_email: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .email("Enter a valid work email")
-    .or(z.literal(""))
-    .optional()
-    .nullable(),
   role: z.string().trim().min(2, "Role is required"),
   department: z.string().trim().min(2, "Department is required"),
   employment_type: z.string().trim().optional().nullable(),

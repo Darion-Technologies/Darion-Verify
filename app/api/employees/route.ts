@@ -46,7 +46,6 @@ export async function POST(request: Request) {
 
   const employee = {
     ...employeeValues,
-    work_email: employeeValues.work_email || null,
     employment_type: employeeValues.employment_type || null,
     joining_date: employeeValues.joining_date || null,
     photo_url: employeeValues.photo_url || null,
@@ -58,7 +57,7 @@ export async function POST(request: Request) {
   const { data, error } = await supabase.from("employees").insert(employee).select("*").single();
 
   if (error) {
-    return NextResponse.json({ error: getEmployeeApiError(error.message) }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
   await supabase.from("employee_activity_logs").insert({
@@ -69,12 +68,4 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json({ employee: data }, { status: 201 });
-}
-
-function getEmployeeApiError(message: string) {
-  if (message.toLowerCase().includes("work_email")) {
-    return "This work email is already assigned to another employee.";
-  }
-
-  return message;
 }

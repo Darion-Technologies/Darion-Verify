@@ -4,7 +4,6 @@ create table if not exists public.employees (
   id uuid primary key default gen_random_uuid(),
   employee_id text unique not null,
   full_name text not null,
-  work_email text,
   role text not null,
   department text not null,
   employment_type text,
@@ -21,9 +20,6 @@ create table if not exists public.employees (
 
 alter table public.employees
 add column if not exists complete_verification_secret text unique;
-
-alter table public.employees
-add column if not exists work_email text;
 
 create table if not exists public.verification_logs (
   id uuid primary key default gen_random_uuid(),
@@ -45,9 +41,6 @@ create table if not exists public.employee_activity_logs (
 
 create index if not exists employees_status_idx on public.employees(status);
 create index if not exists employees_verification_token_idx on public.employees(verification_token);
-create unique index if not exists employees_work_email_unique_idx
-on public.employees(lower(work_email))
-where work_email is not null and work_email <> '';
 create index if not exists verification_logs_employee_id_idx on public.verification_logs(employee_id);
 create index if not exists verification_logs_scanned_at_idx on public.verification_logs(scanned_at desc);
 create index if not exists employee_activity_logs_employee_id_idx on public.employee_activity_logs(employee_id);
