@@ -2,7 +2,8 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/server";
-import type { CompleteVerificationEmployee, VerificationLog } from "@/lib/types";
+import { verifyTotpCode } from "@/lib/totp";
+import type { CompleteVerificationEmployee, EmployeeActivityLog } from "@/lib/types";
 
 const completeVerificationSchema = z.object({
   code: z.string().min(1)
@@ -13,11 +14,9 @@ type RouteContext = {
 };
 
 export async function POST(request: Request, context: RouteContext) {
-  const configuredCode = process.env.COMPLETE_VERIFICATION_CODE;
   const parsed = completeVerificationSchema.safeParse(await request.json().catch(() => null));
-
-  if (!configuredCode || !parsed.success || parsed.data.code !== configuredCode) {
-    return NextResponse.json({ error: "Invalid internal code." }, { status: 401 });
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid authenticator code." }, { status: 401 });
   }
 
   const { token } = await context.params;
@@ -31,12 +30,17 @@ export async function POST(request: Request, context: RouteContext) {
 
   const { data, error } = await supabase
     .from("employees")
-    .select("id, full_name, employee_id, role, department, employment_type, joining_date, status, photo_url, created_at, updated_at")
+    .select("id, full_name, employee_id, role, department, employment_type, joining_date, status, created_at, updated_at, complete_verification_secret")
     .eq("verification_token", token)
     .maybeSingle();
 
-  if (error || !data) {
-    return NextResponse.json({ error: "Verification record not found." }, { status: 404 });
+  if (
+    error ||
+    !data ||
+    !data.complete_verification_secret ||
+    !verifyTotpCode(data.complete_verification_secret, parsed.data.code)
+  ) {
+    return NextResponse.json({ error: "Invalid authenticator code." }, { status: 401 });
   }
 
   await supabase.from("verification_logs").insert({
@@ -47,10 +51,10 @@ export async function POST(request: Request, context: RouteContext) {
   });
 
   const { data: logs } = await supabase
-    .from("verification_logs")
-    .select("id, employee_id, scanned_at, result, ip_address, device_info")
+    .from("employee_activity_logs")
+    .select("id, employee_id, created_at, action, details, actor_id")
     .eq("employee_id", data.id)
-    .order("scanned_at", { ascending: false })
+    .order("created_at", { ascending: false })
     .limit(25);
 
   const employee: CompleteVerificationEmployee = {
@@ -61,13 +65,12 @@ export async function POST(request: Request, context: RouteContext) {
     employment_type: data.employment_type,
     joining_date: data.joining_date,
     status: data.status,
-    photo_url: data.photo_url,
     created_at: data.created_at,
     updated_at: data.updated_at
   };
 
   return NextResponse.json({
     employee,
-    logs: (logs || []) as VerificationLog[]
+    logs: (logs || []) as EmployeeActivityLog[]
   });
 }

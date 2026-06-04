@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { EMPLOYEE_STATUSES, type Employee } from "@/lib/types";
 import { employeeSchema, type EmployeeFormValues } from "@/lib/employee";
 import { uploadEmployeePhoto } from "@/lib/storage";
@@ -33,7 +34,8 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
       employment_type: employee?.employment_type || "",
       joining_date: employee?.joining_date || "",
       status: employee?.status || "Active",
-      photo_url: employee?.photo_url || ""
+      photo_url: employee?.photo_url || "",
+      admin_note: ""
     }
   });
 
@@ -76,6 +78,7 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {error ? <div className="border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div> : null}
+      <input type="hidden" {...register("photo_url")} />
       <div className="grid gap-5 md:grid-cols-2">
         <Field label="Full name" error={errors.full_name?.message}>
           <Input {...register("full_name")} placeholder="Aarav Sharma" />
@@ -101,17 +104,18 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
             ))}
           </Select>
         </Field>
-        <Field label="Photo URL" error={errors.photo_url?.message}>
-          <Input {...register("photo_url")} placeholder="https://..." />
-        </Field>
         <Field label="Upload photo">
           <Input type="file" accept="image/*" onChange={onPhotoChange} disabled={uploading} />
           {uploading ? <p className="mt-2 text-xs text-muted-foreground">Uploading photo...</p> : null}
         </Field>
       </div>
-      {watch("photo_url") ? (
-        <p className="break-all border bg-muted p-3 text-xs text-muted-foreground">{watch("photo_url")}</p>
-      ) : null}
+      <Field label="Admin update note" error={errors.admin_note?.message}>
+        <Textarea
+          {...register("admin_note")}
+          placeholder="Promotion, remark, warning, bad mark, document check, or any internal update note"
+        />
+      </Field>
+      {watch("photo_url") ? <p className="text-xs text-muted-foreground">Employee photo is attached.</p> : null}
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <Button type="button" variant="outline" onClick={() => router.back()}>
           Cancel

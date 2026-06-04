@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { employeeSchema } from "@/lib/employee";
 import { requireApiUser } from "@/lib/api";
 import { createAdminClient } from "@/lib/supabase/server";
+import type { Employee } from "@/lib/types";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -25,7 +26,7 @@ export async function GET(_request: Request, context: RouteContext) {
 }
 
 export async function PATCH(request: Request, context: RouteContext) {
-  const { response } = await requireApiUser();
+  const { user, response } = await requireApiUser();
   if (response) {
     return response;
   }
@@ -37,11 +38,13 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   const { id } = await context.params;
   const supabase = createAdminClient();
+  const { data: existing } = await supabase.from("employees").select("*").eq("id", id).single();
+  const { admin_note: adminNote, ...employeeValues } = parsed.data;
   const payload = {
-    ...parsed.data,
-    employment_type: parsed.data.employment_type || null,
-    joining_date: parsed.data.joining_date || null,
-    photo_url: parsed.data.photo_url || null
+    ...employeeValues,
+    employment_type: employeeValues.employment_type || null,
+    joining_date: employeeValues.joining_date || null,
+    photo_url: employeeValues.photo_url || null
   };
 
   const { data, error } = await supabase
@@ -55,17 +58,33 @@ export async function PATCH(request: Request, context: RouteContext) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  const details = buildEmployeeUpdateDetails(existing as Employee | null, data as Employee, adminNote);
+  if (details) {
+    await supabase.from("employee_activity_logs").insert({
+      employee_id: data.id,
+      action: "Employee updated",
+      details,
+      actor_id: user?.id || null
+    });
+  }
+
   return NextResponse.json({ employee: data });
 }
 
 export async function DELETE(_request: Request, context: RouteContext) {
-  const { response } = await requireApiUser();
+  const { user, response } = await requireApiUser();
   if (response) {
     return response;
   }
 
   const { id } = await context.params;
   const supabase = createAdminClient();
+  await supabase.from("employee_activity_logs").insert({
+    employee_id: id,
+    action: "Employee deleted",
+    details: "Employee record deleted by admin.",
+    actor_id: user?.id || null
+  });
   const { error } = await supabase.from("employees").delete().eq("id", id);
 
   if (error) {
@@ -73,4 +92,37 @@ export async function DELETE(_request: Request, context: RouteContext) {
   }
 
   return NextResponse.json({ ok: true });
+}
+
+function buildEmployeeUpdateDetails(existing: Employee | null, updated: Employee, adminNote?: string) {
+  const changes: string[] = [];
+  const fields: Array<[keyof Employee, string]> = [
+    ["full_name", "Full name"],
+    ["role", "Role"],
+    ["department", "Department"],
+    ["employment_type", "Employment type"],
+    ["joining_date", "Joining date"],
+    ["status", "Status"],
+    ["photo_url", "Photo"]
+  ];
+
+  if (existing) {
+    for (const [field, label] of fields) {
+      const before = existing[field] || "Not specified";
+      const after = updated[field] || "Not specified";
+      if (before !== after) {
+        if (field === "photo_url") {
+          changes.push("Photo: updated");
+          continue;
+        }
+        changes.push(`${label}: ${before} -> ${after}`);
+      }
+    }
+  }
+
+  if (adminNote) {
+    changes.push(`Admin note: ${adminNote}`);
+  }
+
+  return changes.join("\n");
 }

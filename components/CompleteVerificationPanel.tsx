@@ -4,11 +4,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { CompleteVerificationEmployee, VerificationLog } from "@/lib/types";
+import type { CompleteVerificationEmployee, EmployeeActivityLog } from "@/lib/types";
 
 type CompleteVerificationResponse = {
   employee: CompleteVerificationEmployee;
-  logs: VerificationLog[];
+  logs: EmployeeActivityLog[];
 };
 
 export function CompleteVerificationPanel({ token }: { token: string }) {
@@ -35,7 +35,7 @@ export function CompleteVerificationPanel({ token }: { token: string }) {
 
     if (!response.ok) {
       setCompleteLog(null);
-      setError("Invalid internal code.");
+      setError("Invalid authenticator code.");
       setLoading(false);
       return;
     }
@@ -55,13 +55,13 @@ export function CompleteVerificationPanel({ token }: { token: string }) {
         <div className="space-y-5">
           <form onSubmit={submitCode} className="border bg-neutral-50 p-4">
             <div className="space-y-2">
-              <Label>Internal code</Label>
+              <Label>Authenticator code</Label>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Input
                   type="password"
                   value={code}
                   onChange={(event) => setCode(event.target.value)}
-                  placeholder="Enter internal code"
+                  placeholder="Enter 6-digit code"
                   required
                 />
                 <Button type="submit" disabled={loading}>
@@ -71,7 +71,7 @@ export function CompleteVerificationPanel({ token }: { token: string }) {
             </div>
             {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
             <p className="mt-3 text-xs text-muted-foreground">
-              Complete employee logs are restricted to authorized QR verification access.
+              Enter the current code from the employee authenticator app.
             </p>
           </form>
           {completeLog ? <CompleteEmployeeLog data={completeLog} /> : null}
@@ -88,7 +88,7 @@ function CompleteEmployeeLog({ data }: { data: CompleteVerificationResponse }) {
     <section className="border bg-white">
       <div className="border-b p-4">
         <h2 className="text-lg font-semibold">Complete Employee Log</h2>
-        <p className="text-sm text-muted-foreground">Internal QR verification view.</p>
+        <p className="text-sm text-muted-foreground">Internal employee update history.</p>
       </div>
       <div className="grid gap-4 p-4 text-sm sm:grid-cols-2">
         <Info label="Full Name" value={employee.full_name} />
@@ -100,27 +100,23 @@ function CompleteEmployeeLog({ data }: { data: CompleteVerificationResponse }) {
         <Info label="Status" value={employee.status} />
         <Info label="Created Date" value={formatDateTime(employee.created_at)} />
         <Info label="Updated Date" value={formatDateTime(employee.updated_at)} />
-        <Info label="Photo URL" value={employee.photo_url || "Not available"} />
       </div>
       <div className="border-t p-4">
-        <h3 className="font-semibold">Verification Scan History</h3>
+        <h3 className="font-semibold">Employee Update History</h3>
         {data.logs.length ? (
           <div className="mt-3 space-y-3">
             {data.logs.map((log) => (
               <div key={log.id} className="border p-3 text-sm">
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
-                  <p className="font-medium">{log.result}</p>
-                  <p className="text-xs text-muted-foreground">{formatDateTime(log.scanned_at)}</p>
+                  <p className="font-medium">{log.action}</p>
+                  <p className="text-xs text-muted-foreground">{formatDateTime(log.created_at)}</p>
                 </div>
-                <p className="mt-2 break-all text-xs text-muted-foreground">
-                  Device: {log.device_info || "Not available"}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">IP: {log.ip_address || "Not available"}</p>
+                {log.details ? <p className="mt-2 whitespace-pre-wrap text-xs text-muted-foreground">{log.details}</p> : null}
               </div>
             ))}
           </div>
         ) : (
-          <p className="mt-3 text-sm text-muted-foreground">No verification scans recorded yet.</p>
+          <p className="mt-3 text-sm text-muted-foreground">No employee updates recorded yet.</p>
         )}
       </div>
     </section>

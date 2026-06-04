@@ -21,6 +21,7 @@ export type Employee = {
   status: EmployeeStatus;
   photo_url: string | null;
   verification_token: string;
+  complete_verification_secret: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -37,7 +38,7 @@ export type PublicEmployee = Pick<
   | "photo_url"
 >;
 
-export type CompleteVerificationEmployee = PublicEmployee &
+export type CompleteVerificationEmployee = Omit<PublicEmployee, "photo_url"> &
   Pick<Employee, "created_at" | "updated_at">;
 
 export type VerificationLog = {
@@ -47,4 +48,13 @@ export type VerificationLog = {
   result: string;
   ip_address: string | null;
   device_info: string | null;
+};
+
+export type EmployeeActivityLog = {
+  id: string;
+  employee_id: string | null;
+  created_at: string;
+  action: string;
+  details: string | null;
+  actor_id: string | null;
 };

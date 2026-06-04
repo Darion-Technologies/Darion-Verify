@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { employeeSchema, generateEmployeeId, generateVerificationToken } from "@/lib/employee";
 import { requireApiUser } from "@/lib/api";
 import { createAdminClient } from "@/lib/supabase/server";
+import { generateTotpSecret } from "@/lib/totp";
 
 export async function GET() {
   const { response } = await requireApiUser();
@@ -23,7 +24,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const { response } = await requireApiUser();
+  const { user, response } = await requireApiUser();
   if (response) {
     return response;
   }
@@ -34,6 +35,7 @@ export async function POST(request: Request) {
   }
 
   const supabase = createAdminClient();
+  const { admin_note: adminNote, ...employeeValues } = parsed.data;
   const { count, error: countError } = await supabase
     .from("employees")
     .select("id", { count: "exact", head: true });
@@ -43,12 +45,13 @@ export async function POST(request: Request) {
   }
 
   const employee = {
-    ...parsed.data,
-    employment_type: parsed.data.employment_type || null,
-    joining_date: parsed.data.joining_date || null,
-    photo_url: parsed.data.photo_url || null,
-    employee_id: generateEmployeeId(parsed.data.department, (count || 0) + 1),
-    verification_token: generateVerificationToken()
+    ...employeeValues,
+    employment_type: employeeValues.employment_type || null,
+    joining_date: employeeValues.joining_date || null,
+    photo_url: employeeValues.photo_url || null,
+    employee_id: generateEmployeeId(employeeValues.department, (count || 0) + 1),
+    verification_token: generateVerificationToken(),
+    complete_verification_secret: generateTotpSecret()
   };
 
   const { data, error } = await supabase.from("employees").insert(employee).select("*").single();
@@ -56,6 +59,13 @@ export async function POST(request: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  await supabase.from("employee_activity_logs").insert({
+    employee_id: data.id,
+    action: "Employee created",
+    details: adminNote || "Employee record created by admin.",
+    actor_id: user?.id || null
+  });
 
   return NextResponse.json({ employee: data }, { status: 201 });
 }

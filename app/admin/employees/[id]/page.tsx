@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { AdminLayout } from "@/components/AdminLayout";
+import { AuthenticatorSetupCard } from "@/components/AuthenticatorSetupCard";
 import { EmployeeForm } from "@/components/EmployeeForm";
 import { EmployeeProfileCard } from "@/components/EmployeeProfileCard";
 import { TokenActions } from "@/components/TokenActions";
@@ -61,6 +62,7 @@ export default async function EmployeeDetailPage({ params }: PageProps) {
               <TokenActions employeeId={id} />
             </CardContent>
           </Card>
+          <AuthenticatorSetupCard employee={employee as Employee} />
           <Card className="bg-white">
             <CardHeader className="border-b">
               <CardTitle>Recent scan logs</CardTitle>

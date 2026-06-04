@@ -34,7 +34,6 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_EMPLOYEE_PHOTOS_BUCKET=employee-photos
 ADMIN_ACCESS_KEY=change-this-long-random-admin-gate-key
-COMPLETE_VERIFICATION_CODE=change-this-internal-complete-verification-code
 ```
 
 5. Start the app:
@@ -78,6 +77,8 @@ The app stores a secure HTTP-only gate cookie for 8 hours and redirects to the c
 - `GET /api/verify/[token]`
 - `POST /api/verification-logs`
 - `POST /api/employees/[id]/regenerate-token`
+- `POST /api/employees/[id]/authenticator-secret`
+- `POST /api/verify/[token]/complete`
 
 ## Verification Rules
 
@@ -90,7 +91,7 @@ The app stores a secure HTTP-only gate cookie for 8 hours and redirects to the c
 
 The public verification response intentionally includes only safe employee fields: company name in UI, verification title, employee photo, full name, employee ID, role, department, employment type, joining date, status, and result.
 
-Complete Verification on the public verification page requires `COMPLETE_VERIFICATION_CODE`. A valid code reveals only non-sensitive employee details and recent QR verification scan history on the same page. It does not return verification tokens or sensitive personal, identity, bank, contact, salary, address, emergency contact, or document data.
+Complete Verification on the public verification page requires the employee-specific 6-digit code from an authenticator app. Admins can scan or reset the authenticator setup from the employee profile page. A valid code reveals only non-sensitive employee details and recent admin employee update history on the same page. It does not return verification tokens, photo URLs, authenticator secrets, or sensitive personal, identity, bank, contact, salary, address, emergency contact, or document data.
 
 ## ID Cards
 

@@ -9,7 +9,8 @@ export const employeeSchema = z.object({
   employment_type: z.string().trim().optional().nullable(),
   joining_date: z.string().optional().nullable(),
   status: z.enum(EMPLOYEE_STATUSES),
-  photo_url: z.union([z.string().url("Photo URL must be valid"), z.literal("")]).optional().nullable()
+  photo_url: z.union([z.string().url("Photo URL must be valid"), z.literal("")]).optional().nullable(),
+  admin_note: z.string().trim().max(800, "Update note must be under 800 characters").optional()
 });
 
 export type EmployeeFormValues = z.infer<typeof employeeSchema>;
