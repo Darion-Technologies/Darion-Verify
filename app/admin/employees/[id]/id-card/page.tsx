@@ -43,7 +43,11 @@ export default async function IDCardPage({ params }: PageProps) {
           <h1 className="text-2xl font-semibold">ID card preview</h1>
           <p className="text-sm text-muted-foreground">Download a PNG or use print to save as PDF.</p>
         </div>
-        <IDCardActions fileName={typedEmployee.employee_id} />
+        <IDCardActions
+          fileName={typedEmployee.employee_id}
+          verificationUrl={verificationUrl}
+          employeeName={typedEmployee.full_name}
+        />
       </div>
       <div className="flex justify-center">
         <IDCardPreview employee={typedEmployee} verificationUrl={verificationUrl} />
