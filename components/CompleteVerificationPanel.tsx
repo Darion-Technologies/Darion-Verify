@@ -48,12 +48,26 @@ export function CompleteVerificationPanel({ token }: { token: string }) {
   return (
     <div className="mt-6 border-t pt-5">
       {!open ? (
-        <Button variant="outline" onClick={() => setOpen(true)}>
-          Complete Verification
-        </Button>
+        <div className="space-y-3">
+          <div>
+            <h2 className="text-sm font-semibold">Need authorized access?</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Use an authenticator code to view the employee activity record.
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => setOpen(true)}>
+            Authorized Verification
+          </Button>
+        </div>
       ) : (
         <div className="space-y-5">
           <form onSubmit={submitCode} className="border bg-neutral-50 p-4">
+            <div className="mb-4">
+              <h2 className="text-sm font-semibold">Authorized Verification</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Enter the authenticator code to access the employee activity record.
+              </p>
+            </div>
             <div className="space-y-2">
               <Label>Authenticator code</Label>
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -87,8 +101,8 @@ function CompleteEmployeeLog({ data }: { data: CompleteVerificationResponse }) {
   return (
     <section className="border bg-white">
       <div className="border-b p-4">
-        <h2 className="text-lg font-semibold">Complete Employee Log</h2>
-        <p className="text-sm text-muted-foreground">Internal employee update history.</p>
+        <h2 className="text-lg font-semibold">Employee Activity Record</h2>
+        <p className="text-sm text-muted-foreground">Authorized employee update history.</p>
       </div>
       <div className="grid gap-4 p-4 text-sm sm:grid-cols-2">
         <Info label="Full Name" value={employee.full_name} />

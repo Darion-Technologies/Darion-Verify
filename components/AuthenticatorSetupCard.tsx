@@ -38,11 +38,11 @@ export function AuthenticatorSetupCard({ employee }: { employee: Employee }) {
   return (
     <Card className="bg-white">
       <CardHeader className="border-b">
-        <CardTitle>Complete Verification Authenticator</CardTitle>
+        <CardTitle>Authorized Verification Authenticator</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 pt-6">
         <p className="text-sm text-muted-foreground">
-          Scan this QR in an authenticator app. The current 6-digit code unlocks Complete Verification for this employee.
+          Scan this QR in an authenticator app. The current 6-digit code unlocks Authorized Verification for this employee.
         </p>
         {employee.complete_verification_secret ? (
           <div className="space-y-4">
