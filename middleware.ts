@@ -111,14 +111,8 @@ function createDeniedHtml() {
       .logo {
         width: 46px;
         height: 46px;
-        display: grid;
-        place-items: center;
-        border: 1px solid var(--ink);
-        background: var(--cyan);
-        color: white;
-        font-size: 22px;
-        font-weight: 950;
-        letter-spacing: -0.08em;
+        display: block;
+        object-fit: contain;
       }
 
       .eyebrow {
@@ -217,7 +211,7 @@ function createDeniedHtml() {
   <body>
     <main class="card" role="main" aria-live="polite">
       <header class="header">
-        <div class="logo">dt.</div>
+        <img class="logo" src="/darion-technologies-logo.png" alt="Darion Technologies logo" />
         <div>
           <p class="eyebrow">Admin gate locked</p>
           <p class="brand">Darion Badge</p>

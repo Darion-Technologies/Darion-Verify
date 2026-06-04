@@ -3,12 +3,12 @@ import { cn } from "@/lib/utils";
 
 export function DarionLogo({ className }: { className?: string }) {
   return (
-    <div className={cn("relative overflow-hidden border border-neutral-900 bg-[#078daf]", className)}>
+    <div className={cn("relative overflow-hidden", className)}>
       <Image
         src="/darion-technologies-logo.png"
         alt="Darion Technologies logo"
         fill
-        className="object-contain p-1"
+        className="object-contain"
         priority
       />
     </div>
