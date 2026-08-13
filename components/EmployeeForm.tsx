@@ -29,6 +29,7 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
   } = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
     defaultValues: {
+      employee_id: employee?.employee_id || "",
       full_name: employee?.full_name || "",
       role: employee?.role || "",
       department: employee?.department || "",
@@ -46,6 +47,11 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
 
     if (employee && values.status !== employee.status && !values.admin_note?.trim()) {
       setError("Add an admin update note before changing employee status.");
+      return;
+    }
+
+    if (employee && values.employee_id !== employee.employee_id && !values.admin_note?.trim()) {
+      setError("Add an admin update note when changing the employee ID.");
       return;
     }
 
@@ -94,6 +100,11 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
       {message ? <div className="border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">{message}</div> : null}
       <input type="hidden" {...register("photo_url")} />
       <div className="grid gap-5 md:grid-cols-2">
+        {employee ? (
+          <Field label="Employee ID" error={errors.employee_id?.message}>
+            <Input {...register("employee_id")} placeholder="DRN-TECH-FSD-2026-0001" />
+          </Field>
+        ) : null}
         <Field label="Full name" error={errors.full_name?.message}>
           <Input {...register("full_name")} placeholder="Aarav Sharma" />
         </Field>
