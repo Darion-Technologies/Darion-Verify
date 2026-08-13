@@ -3,7 +3,10 @@ import { z } from "zod";
 import { EMPLOYEE_STATUSES, type EmployeeStatus } from "@/lib/types";
 
 export const employeeSchema = z.object({
-  employee_id: z.string().trim().min(2, "Employee ID is required").max(100, "Employee ID must be under 100 characters"),
+  employee_id: z.union([
+    z.string().trim().min(2, "Employee ID is required").max(100, "Employee ID must be under 100 characters"),
+    z.literal("")
+  ]),
   full_name: z.string().trim().min(2, "Full name is required"),
   role: z.string().trim().min(2, "Role is required"),
   department: z.string().trim().min(2, "Department is required"),
