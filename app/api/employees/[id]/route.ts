@@ -46,8 +46,29 @@ export async function PATCH(request: Request, context: RouteContext) {
   const supabase = createAdminClient();
   const { data: existing } = await supabase.from("employees").select("*").eq("id", id).single();
   const { admin_note: adminNote, ...employeeValues } = parsed.data;
+  
   if ((existing as Employee | null)?.status !== employeeValues.status && !adminNote?.trim()) {
     return NextResponse.json({ error: "Admin note is required when changing employee status." }, { status: 400 });
+  }
+
+  if ((existing as Employee | null)?.employee_id !== employeeValues.employee_id && !adminNote?.trim()) {
+    return NextResponse.json({ error: "Admin note is required when changing employee ID." }, { status: 400 });
+  }
+
+  // Check if new employee_id is already in use by another employee
+  if ((existing as Employee | null)?.employee_id !== employeeValues.employee_id) {
+    const { data: duplicate } = await supabase
+      .from("employees")
+      .select("id", { count: "exact", head: true })
+      .eq("employee_id", employeeValues.employee_id)
+      .neq("id", id);
+
+    if (duplicate && duplicate.length > 0) {
+      return NextResponse.json(
+        { error: `Employee ID "${employeeValues.employee_id}" is already in use by another employee.` },
+        { status: 409 }
+      );
+    }
   }
 
   const payload = {
@@ -112,6 +133,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
 function buildEmployeeUpdateDetails(existing: Employee | null, updated: Employee, adminNote?: string) {
   const changes: string[] = [];
   const fields: Array<[keyof Employee, string]> = [
+    ["employee_id", "Employee ID"],
     ["full_name", "Full name"],
     ["role", "Role"],
     ["department", "Department"],
